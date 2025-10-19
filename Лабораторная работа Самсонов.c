@@ -8,7 +8,6 @@ void find_sequences(int target, int numbers[], int m,
                    int last_num) {
     
     if (target == 0) {
-
         printf("[");
         for (int i = 0; i < current_length; i++) {
             printf("%d", current_sequence[i]);
@@ -19,62 +18,59 @@ void find_sequences(int target, int numbers[], int m,
         printf("]\n");
         return;
     }
-
+    
     if (target < 0) {
         return;
     }
-
+    
     for (int i = 0; i < m; i++) {
         int num = numbers[i];
-
+        
         if (num != last_num) {
-
             current_sequence[current_length] = num;
-
             find_sequences(target - num, numbers, m, 
-                          current_sequence, current_length + 1,
-                          num);
+                          current_sequence, current_length + 1, num);
         }
     }
 }
 
-int main(argv) {
+int main() {
     int N, M;
-
-    printf("Введите число N: ");
+    
+    printf("Enter N: ");
     scanf("%d", &N);
     
-    printf("Введите количество элементов M: ");
+    printf("Enter M: ");
     scanf("%d", &M);
-
+    
     int* S = (int*)malloc(M * sizeof(int));
     if (S == NULL) {
-        printf("Ошибка выделения памяти!\n");
+        printf("Memory error!\n");
         return 1;
     }
     
-    printf("Введите элементы множества S:\n");
+    printf("Enter set S:\n");
     for (int i = 0; i < M; i++) {
-        printf("Элемент %d: ", i + 1);
+        printf("Element %d: ", i + 1);
         scanf("%d", &S[i]);
     }
-   
+    
     int* current_sequence = (int*)malloc(MAX_SEQUENCE_LENGTH * sizeof(int));
     if (current_sequence == NULL) {
-        printf("Ошибка выделения памяти!\n");
+        printf("Memory error!\n");
         free(S);
         return 1;
     }
     
-    printf("\nВсе последовательности чисел из {");
+    printf("\nSequences from {");
     for (int i = 0; i < M; i++) {
         printf("%d", S[i]);
         if (i < M - 1) printf(", ");
     }
-    printf("}, сумма которых равна %d:\n", N);
-
+    printf("} with sum %d:\n", N);
+    
     find_sequences(N, S, M, current_sequence, 0, -1);
-
+    
     free(S);
     free(current_sequence);
     
