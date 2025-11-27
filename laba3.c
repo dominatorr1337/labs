@@ -14,15 +14,51 @@ int main(int argc, char** argv) {
     }
 
     int N, M;
-    fscanf(file, "%d %d", &N, &M);
+    if (fscanf(file, "%d %d", &N, &M) != 2) {
+        printf("Ошибка: не удалось прочитать размеры матрицы\n");
+        fclose(file);
+        return 1;
+    }
+    
+    if (N <= 0 || M <= 0) {
+        printf("Ошибка: неверные размеры матрицы %dx%d\n", N, M);
+        fclose(file);
+        return 1;
+    }
+
     int** matrix = malloc(N * sizeof(int*));
+    if (!matrix) {
+        printf("Ошибка выделения памяти для матрицы\n");
+        fclose(file);
+        return 1;
+    }
+    
     for (int i = 0; i < N; i++) {
         matrix[i] = malloc(M * sizeof(int));
+        if (!matrix[i]) {
+            printf("Ошибка выделения памяти для строки %d\n", i);
+            for (int j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            fclose(file);
+            return 1;
+        }
+        
         for (int j = 0; j < M; j++) {
-            fscanf(file, "%d", &matrix[i][j]);
+            if (fscanf(file, "%d", &matrix[i][j]) != 1) {
+                printf("Ошибка: некорректный формат данных в файле (строка %d, столбец %d)\n", i+1, j+1);
+                for (int k = 0; k <= i; k++) {
+                    free(matrix[k]);
+                }
+                free(matrix);
+                fclose(file);
+                return 1;
+            }
         }
     }
     fclose(file);
+    
     printf("Матрица %dx%d:\n", N, M);
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < M; j++) {
