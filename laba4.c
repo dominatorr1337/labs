@@ -29,20 +29,23 @@ void insertion_sort(int arr[], int n) {
 void merge(int arr[], int left, int mid, int right) {
     int n1 = mid - left + 1;
     int n2 = right - mid;
-    
-    int L[n1], R[n2];
-    
+    int* L = (int*)malloc(n1 * sizeof(int));
+    int* R = (int*)malloc(n2 * sizeof(int));
+    if (L == NULL || R == NULL) {
+        printf("ошибка выделения памяти\n");
+        return;
+    }
     for (int i = 0; i < n1; i++) L[i] = arr[left + i];
     for (int i = 0; i < n2; i++) R[i] = arr[mid + 1 + i];
-    
     int i = 0, j = 0, k = left;
     while (i < n1 && j < n2) {
         if (L[i] <= R[j]) arr[k++] = L[i++];
         else arr[k++] = R[j++];
     }
-    
     while (i < n1) arr[k++] = L[i++];
     while (j < n2) arr[k++] = R[j++];
+    free(L);
+    free(R);
 }
 
 void merge_sort(int arr[], int left, int right) {
@@ -59,28 +62,22 @@ void generate_array(int arr[], int n) {
         arr[i] = rand() % 1000;
     }
 }
-void copy_array(int source[], int dest[], int n) {
+void copy_array(int source[], int copied[], int n) {
     for (int i = 0; i < n; i++) {
-        dest[i] = source[i];
+        copied[i] = source[i];
     }
 }
 
 int main() {
     srand(time(NULL));
-    
     int sizes[] = {10, 1000, 10000, 100000};
     int num_sizes = 4;
-    
-    printf("Размер | Пузырек | Вставки | Слияние\n");
-    printf("------------------------------------\n");
-    
+    printf("размер | пузырек | вставки | слияние\n");
     for (int i = 0; i < num_sizes; i++) {
         int n = sizes[i];
         int* original = malloc(n * sizeof(int));
         generate_array(original, n);
-        
         printf("%6d | ", n);
-        
         if (n <= 10000) {
             int* arr = malloc(n * sizeof(int));
             copy_array(original, arr, n);
@@ -93,7 +90,6 @@ int main() {
         } else {
             printf("  долго | ");
         }
-
         if (n <= 10000) {
             int* arr = malloc(n * sizeof(int));
             copy_array(original, arr, n);
@@ -106,7 +102,6 @@ int main() {
         } else {
             printf("  долго | ");
         }
-        
         int* arr = malloc(n * sizeof(int));
         copy_array(original, arr, n);
         clock_t start = clock();
@@ -118,6 +113,5 @@ int main() {
         free(arr);
         free(original);
     }
-    
     return 0;
 }
